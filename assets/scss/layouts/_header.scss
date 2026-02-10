@@ -33,8 +33,7 @@
   }
 }
 
-/* Global Header on Scroll
-------------------------------*/
+/* Global Header on Scroll (noir logo) */
 .scrolled .header {
-  --background-color: #6f6f6f;
+  --background-color: rgba(0, 0, 0, 0.97);
 }

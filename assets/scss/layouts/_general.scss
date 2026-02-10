@@ -15,7 +15,7 @@ a {
 }
 
 a:hover {
-  color: color-mix(in srgb, var(--accent-color), transparent 25%);
+  color: var(--accent-hover, color-mix(in srgb, var(--accent-color), black 15%));
   text-decoration: none;
 }
 
@@ -29,12 +29,16 @@ h6 {
   font-family: var(--heading-font);
 }
 
+.text-accent { color: var(--accent-color); }
+.card.hover-shadow { transition: box-shadow 0.3s ease; }
+.card.hover-shadow:hover { box-shadow: 0 0.5rem 1.5rem rgba(0, 0, 0, 0.12) !important; }
+
 /* PHP Email Form Messages
 ------------------------------*/
 .php-email-form {
   .error-message {
     display: none;
-    background: #df1529;
+    background: var(--accent-color);
     color: #ffffff;
     text-align: left;
     padding: 15px;

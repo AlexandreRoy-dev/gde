@@ -73,7 +73,7 @@
       border-radius: 50px;
 
       &:hover {
-        background: color-mix(in srgb, var(--accent-color), transparent 20%);
+        background: var(--accent-hover, color-mix(in srgb, var(--accent-color), black 15%));
       }
     }
   }

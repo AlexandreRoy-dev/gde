@@ -51,7 +51,7 @@
     transition: 0.3s;
 
     &:hover {
-      background: color-mix(in srgb, var(--accent-color) 90%, white 15%);
+      background: var(--accent-hover, color-mix(in srgb, var(--accent-color), black 15%));
     }
   }
 

@@ -39,5 +39,11 @@
       color: color-mix(in srgb, var(--default-color), transparent 40%);
       margin: 0;
     }
+
+    a {
+      display: inline-block;
+      margin-top: 12px;
+      font-weight: 600;
+    }
   }
 }

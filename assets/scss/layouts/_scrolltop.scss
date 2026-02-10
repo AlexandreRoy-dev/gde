@@ -22,7 +22,7 @@
   }
 
   &:hover {
-    background-color: color-mix(in srgb, var(--accent-color), transparent 20%);
+    background-color: var(--accent-hover, color-mix(in srgb, var(--accent-color), black 15%));
     color: var(--contrast-color);
   }
 

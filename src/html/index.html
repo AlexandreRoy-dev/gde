@@ -364,28 +364,28 @@
               </div>
             </div>
             <div class="bg-zinc-900 p-8 border border-zinc-800">
-              <form class="contact-form space-y-6">
+              <form id="contact-form" class="contact-form space-y-6" action="https://formspree.io/f/mvzwybzb" method="POST">
                 <div class="grid md:grid-cols-2 gap-6">
                   <div>
                     <label class="block text-zinc-400 text-sm uppercase tracking-wider mb-2">First Name</label>
-                    <input type="text" class="w-full bg-zinc-950 border border-zinc-700 px-4 py-3 text-white focus:border-amber-500 focus:outline-none transition-colors" required="">
+                    <input type="text" name="prenom" class="w-full bg-zinc-950 border border-zinc-700 px-4 py-3 text-white focus:border-amber-500 focus:outline-none transition-colors" required="">
                   </div>
                   <div>
                     <label class="block text-zinc-400 text-sm uppercase tracking-wider mb-2">Last Name</label>
-                    <input type="text" class="w-full bg-zinc-950 border border-zinc-700 px-4 py-3 text-white focus:border-amber-500 focus:outline-none transition-colors" required="">
+                    <input type="text" name="nom" class="w-full bg-zinc-950 border border-zinc-700 px-4 py-3 text-white focus:border-amber-500 focus:outline-none transition-colors" required="">
                   </div>
                 </div>
                 <div>
                   <label class="block text-zinc-400 text-sm uppercase tracking-wider mb-2">Email</label>
-                  <input type="email" class="w-full bg-zinc-950 border border-zinc-700 px-4 py-3 text-white focus:border-amber-500 focus:outline-none transition-colors" required="">
+                  <input type="email" name="email" class="w-full bg-zinc-950 border border-zinc-700 px-4 py-3 text-white focus:border-amber-500 focus:outline-none transition-colors" required="">
                 </div>
                 <div>
                   <label class="block text-zinc-400 text-sm uppercase tracking-wider mb-2">Phone</label>
-                  <input type="tel" class="w-full bg-zinc-950 border border-zinc-700 px-4 py-3 text-white focus:border-amber-500 focus:outline-none transition-colors">
+                  <input type="tel" name="telephone" class="w-full bg-zinc-950 border border-zinc-700 px-4 py-3 text-white focus:border-amber-500 focus:outline-none transition-colors">
                 </div>
                 <div>
                   <label class="block text-zinc-400 text-sm uppercase tracking-wider mb-2">Project Type</label>
-                  <select class="w-full bg-zinc-950 border border-zinc-700 px-4 py-3 text-white focus:border-amber-500 focus:outline-none transition-colors">
+                  <select name="type_projet" class="w-full bg-zinc-950 border border-zinc-700 px-4 py-3 text-white focus:border-amber-500 focus:outline-none transition-colors">
                     <option value="">Select a project type</option>
                     <option value="commercial">Commercial Construction</option>
                     <option value="residential">Residential Project</option>
@@ -396,8 +396,11 @@
                 </div>
                 <div>
                   <label class="block text-zinc-400 text-sm uppercase tracking-wider mb-2">Message</label>
-                  <textarea rows="4" class="w-full bg-zinc-950 border border-zinc-700 px-4 py-3 text-white focus:border-amber-500 focus:outline-none transition-colors resize-none" required=""></textarea>
+                  <textarea name="message" rows="4" class="w-full bg-zinc-950 border border-zinc-700 px-4 py-3 text-white focus:border-amber-500 focus:outline-none transition-colors resize-none" required=""></textarea>
                 </div>
+
+                <p id="contact-form-status" class="hidden text-sm text-red-300 font-medium"></p>
+
                 <button type="submit" class="w-full bg-amber-500 text-zinc-950 py-4 text-sm uppercase tracking-widest font-bold hover:bg-amber-400 transition-all">Submit Request</button>
               </form>
             </div>
@@ -486,6 +489,65 @@
       </footer>
     </div>
     <script type="text/javascript" src="js/global-17244.js?v=1770823637"></script>
+    <script>
+      document.addEventListener('DOMContentLoaded', function () {
+        var form = document.getElementById('contact-form');
+        if (!form) return;
+
+        var statusEl = document.getElementById('contact-form-status');
+        var submitBtn = form.querySelector('button[type="submit"]');
+        var actionUrl = form.getAttribute('action');
+
+        function setStatus(message) {
+          if (!statusEl) return;
+          if (!message) {
+            statusEl.classList.add('hidden');
+            statusEl.textContent = '';
+            return;
+          }
+          statusEl.textContent = message;
+          statusEl.classList.remove('hidden');
+        }
+
+        form.addEventListener('submit', async function (e) {
+          if (!actionUrl) return;
+          e.preventDefault();
+
+          if (submitBtn) submitBtn.disabled = true;
+          setStatus('');
+
+          try {
+            var data = new FormData(form);
+            var res = await fetch(actionUrl, {
+              method: 'POST',
+              body: data,
+              headers: { 'Accept': 'application/json' }
+            });
+
+            if (res.ok) {
+              window.location.href = '/merci.html';
+              return;
+            }
+
+            try {
+              var payload = await res.json();
+              if (payload && payload.errors && payload.errors.length) {
+                setStatus(payload.errors.map(function (err) { return err.message; }).join(', '));
+              } else {
+                setStatus('Une erreur est survenue lors de l\'envoi du formulaire.');
+              }
+            } catch (jsonErr) {
+              setStatus('Une erreur est survenue lors de l\'envoi du formulaire.');
+            }
+          } catch (err) {
+            // Fall back to normal form submit if fetch fails.
+            try { form.submit(); } catch (fallbackErr) {}
+          } finally {
+            if (submitBtn) submitBtn.disabled = false;
+          }
+        });
+      });
+    </script>
 </body>
 </html>
 

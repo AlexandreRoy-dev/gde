@@ -550,12 +550,17 @@
     <div id="cookie-consent" class="fixed bottom-0 left-0 right-0 z-[100] bg-white border-t border-zinc-200 hidden">
         <div class="max-w-7xl mx-auto px-6 py-4 flex flex-col md:flex-row md:items-center md:justify-between gap-3">
             <p class="text-zinc-600 text-sm leading-relaxed">
-                Nous utilisons des cookies pour améliorer votre expérience. En continuant, vous acceptez notre
+                Nous utilisons des cookies pour améliorer votre expérience. Vous pouvez accepter ou refuser. Consultez notre
                 <a href="public/privacy-policy.html" class="text-red-600 hover:text-red-700 underline font-semibold">politique de confidentialité</a>.
             </p>
-            <button id="cookie-accept" class="bg-red-600 text-white px-6 py-2 text-sm uppercase tracking-widest font-bold hover:bg-red-700 transition-all shadow-md rounded">
-                Accepter
-            </button>
+            <div class="flex flex-col sm:flex-row gap-2 sm:items-center sm:justify-end shrink-0">
+                <button type="button" id="cookie-refuse" class="bg-white text-zinc-700 border border-zinc-300 px-6 py-2 text-sm uppercase tracking-widest font-bold hover:bg-zinc-50 transition-all shadow-sm rounded">
+                    Refuser
+                </button>
+                <button type="button" id="cookie-accept" class="bg-red-600 text-white px-6 py-2 text-sm uppercase tracking-widest font-bold hover:bg-red-700 transition-all shadow-md rounded">
+                    Accepter
+                </button>
+            </div>
         </div>
     </div>
     <script>
@@ -579,22 +584,40 @@
     </script>
     <script>
         document.addEventListener('DOMContentLoaded', function () {
-            var storageKey = 'gde_cookie_consent_accepted';
+            var consentKey = 'gde_cookie_consent';
+            var legacyKey = 'gde_cookie_consent_accepted';
             var banner = document.getElementById('cookie-consent');
             if (!banner) return;
 
-            var accepted = localStorage.getItem(storageKey) === '1';
-            if (accepted) return;
+            function hasConsentChoice() {
+                try {
+                    var v = localStorage.getItem(consentKey);
+                    if (v === 'accepted' || v === 'refused') return true;
+                    if (localStorage.getItem(legacyKey) === '1') return true;
+                } catch (e) {}
+                return false;
+            }
+
+            if (hasConsentChoice()) return;
 
             banner.classList.remove('hidden');
 
-            var acceptBtn = document.getElementById('cookie-accept');
-            if (!acceptBtn) return;
-
-            acceptBtn.addEventListener('click', function () {
-                try { localStorage.setItem(storageKey, '1'); } catch (e) {}
+            function saveChoice(value) {
+                try {
+                    if (value === 'accepted') {
+                        localStorage.setItem(consentKey, 'accepted');
+                        localStorage.removeItem(legacyKey);
+                    } else {
+                        localStorage.setItem(consentKey, 'refused');
+                    }
+                } catch (e) {}
                 banner.classList.add('hidden');
-            });
+            }
+
+            var acceptBtn = document.getElementById('cookie-accept');
+            var refuseBtn = document.getElementById('cookie-refuse');
+            if (acceptBtn) acceptBtn.addEventListener('click', function () { saveChoice('accepted'); });
+            if (refuseBtn) refuseBtn.addEventListener('click', function () { saveChoice('refused'); });
         });
     </script>
     <script>
